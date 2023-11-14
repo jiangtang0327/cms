@@ -10,9 +10,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -43,6 +41,20 @@ public class SlideshowController {
         return Result.success(slideshowIPage);
 
     }
+
+    @ApiOperation(value = "根据id查询轮播图信息",notes = "用于更新时的数据回显")
+    @GetMapping("/queryById/{id}")
+    public Result queryById(@PathVariable Integer id) {
+        return Result.success(slideshowService.getById(id));
+    }
+
+    @ApiOperation(value = "新增或更新轮播图", notes = "slideshow参数包含id值则为更新，不包含i为新增")
+    @PostMapping("/saveOrUpdate")
+    public Result saveOrUpdate(@RequestBody Slideshow slideshow) {
+        slideshowService.saveOrUpdate(slideshow);
+        return Result.success("操作成功");
+    }
+
 
 
 }
