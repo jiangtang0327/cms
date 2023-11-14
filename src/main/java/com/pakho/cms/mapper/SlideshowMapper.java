@@ -2,6 +2,7 @@ package com.pakho.cms.mapper;
 
 import com.pakho.cms.bean.Slideshow;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.springframework.stereotype.Component;
 
 /**
 * @author 87764

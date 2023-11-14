@@ -1,35 +1,44 @@
 package com.pakho.cms.config;
 
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Contact;
-import io.swagger.v3.oas.models.info.Info;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Contact;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
 
 @Configuration
+@EnableSwagger2WebMvc
 public class Knife4jConfig {
-
-    @Bean
-    public GroupedOpenApi adminApi() {      // 创建了一个api接口的分组
-        return GroupedOpenApi.builder()
-                .group("admin-api")         // 分组名称
-                .pathsToMatch("/admin/**")  // 接口请求路径规则
+    //Swagger界面中显示的基本信息
+    private ApiInfo apiInfo(){
+        //配置基本信息
+        Contact jiantang = new Contact("jiantang", "http://www.it.com", "jiangtang0327@qq.com");
+        return new ApiInfoBuilder()
+                //标题
+                .title("CMS内容管理系统")
+                .description("欢迎访问CMS接口文档")
+                //基本信息
+                .contact(jiantang)
+                //版本号
+                .version("1.0.0")
+                //创建
                 .build();
     }
 
-    /***
-     * @description 自定义接口信息
-     */
+    //配置Controller的包路径
     @Bean
-    public OpenAPI customOpenAPI() {
-
-        return new OpenAPI()
-                .info(new Info()
-                        .title("csmAPI接口文档")
-                        .version("1.0")
-                        .description("cmsAPI接口文档")
-                        .contact(new Contact().name("Pakho"))); // 设定作者
+    public Docket createRestApi(){
+        return new Docket(DocumentationType.SWAGGER_2)
+                .apiInfo(apiInfo())
+                .select()
+                //传入要扫描的包结构
+                .apis(RequestHandlerSelectors.basePackage("com.pakho.cms.web.controller"))
+                .paths(PathSelectors.any())
+                .build();
     }
-
 }
