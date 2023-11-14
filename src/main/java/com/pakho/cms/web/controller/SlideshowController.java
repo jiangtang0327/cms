@@ -1,9 +1,13 @@
 package com.pakho.cms.web.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
 import com.pakho.cms.bean.Slideshow;
 import com.pakho.cms.service.SlideshowService;
 import com.pakho.cms.util.Result;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,11 +23,25 @@ public class SlideshowController {
     @Autowired
     private SlideshowService slideshowService;
 
-    @ApiOperation(value = "查询所有轮播图")
+    @ApiOperation(value = "查询所有可用的轮播图")
     @GetMapping("/queryAllEnable")
-    public Result queryAllEnable(){
-        List<Slideshow> list = slideshowService.list();
+    public Result queryAllEnable() {
+        List<Slideshow> list = slideshowService.queryAllEnable();
         return Result.success(list);
+    }
+
+    @ApiOperation(value = "根据条件查询轮播图")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "pageNum", value = "当前页", dataType = "int", required = true, defaultValue = "1"),
+            @ApiImplicitParam(name = "pageSize", value = "每页数量", dataType = "int", required = true, defaultValue = "4"),
+            @ApiImplicitParam(name = "status", value = "状态值"),
+            @ApiImplicitParam(name = "desc", value = "描述信息")
+    })
+    @GetMapping("/query")
+    public Result query(Integer pageNum, Integer pageSize, String status, String desc) {
+        IPage<Slideshow> slideshowIPage = slideshowService.queryAll(pageNum, pageSize, status, desc);
+        return Result.success(slideshowIPage);
+
     }
 
 

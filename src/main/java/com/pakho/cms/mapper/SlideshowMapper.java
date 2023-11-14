@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 * @createDate 2023-11-14 09:52:30
 * @Entity com.pakho.cms.bean.Slideshow
 */
+@Component
 public interface SlideshowMapper extends BaseMapper<Slideshow> {
 
 }

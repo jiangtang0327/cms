@@ -1,7 +1,12 @@
 package com.pakho.cms.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.pakho.cms.bean.Slideshow;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.pakho.cms.mapper.SlideshowMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 /**
 * @author 87764
@@ -9,5 +14,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 * @createDate 2023-11-14 09:52:30
 */
 public interface SlideshowService extends IService<Slideshow> {
+    List<Slideshow> queryAllEnable();
+    IPage<Slideshow> queryAll(Integer page, Integer pageSize, String status, String desc);
 
 }
