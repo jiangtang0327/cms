@@ -25,4 +25,6 @@ public class SlideshowController {
         List<Slideshow> list = slideshowService.list();
         return Result.success(list);
     }
+
+
 }
