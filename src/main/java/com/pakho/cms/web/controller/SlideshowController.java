@@ -9,11 +9,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @Api(tags = "轮播图管理")
 @RequestMapping("/slideshow")
 @RestController
@@ -54,6 +56,15 @@ public class SlideshowController {
         slideshowService.saveOrUpdate(slideshow);
         return Result.success("操作成功");
     }
+
+    @ApiOperation(value = "批量删除轮播图", notes = "需要提供多个id值")
+    @DeleteMapping("/deleteByBatch/{ids}")
+    public Result deleteSlideshowInBatch(@PathVariable List<Integer>ids){
+        log.info("ids: {}",ids);
+        boolean b = slideshowService.removeByIds(ids);
+        return Result.success();
+    }
+
 
 
 
