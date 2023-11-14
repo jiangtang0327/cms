@@ -4,6 +4,10 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 100MB
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/cms
@@ -13,3 +17,15 @@ spring:
 
 server:
   port: 8989
+
+upload:
+# 七牛云OSS相关配置
+  oss:
+    # 配置AK
+    accessKey: "pVUsJaZnxy43WwmfyEbDHQFrpMlYq2yV0viHIgFb"
+    # 配置SK
+    secretKey: "2fysqh6dW5QJDPD4JVHPxo9xEbgy78aIE4G-sWPZ"
+    # 配置桶
+    bucket: "jiangtang-love"
+    # 配置基础域名
+    baseUrl: "http://s3hhndr6z.hn-bkt.clouddn.com/"
