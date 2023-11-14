@@ -34,6 +34,7 @@ public enum ResultCode {
 	DATA_EXISTED(50003, "数据已存在"),
 	SLIDESHOW_NOT_EXISTED(50004, "轮播图不存在"),
 	SLIDESHOW_URL_EXISTED(50005,"轮播图URL已存在"),
+	USERNAME_HAS_EXISTED(50006, "用户名已存在"),
 	
 	
 	/* 接口错误：60001-69999 */

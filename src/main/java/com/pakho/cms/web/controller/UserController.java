@@ -6,13 +6,12 @@ import com.pakho.cms.service.UserService;
 import com.pakho.cms.util.Result;
 import com.pakho.cms.util.ResultCode;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @Api(tags = "用户模块")
@@ -36,5 +35,38 @@ public class UserController {
         return Result.success(user);
     }
 
+    @ApiOperation(value = "新增用户", notes = "username、password必须存在不为空，且username唯一")
+    @PostMapping("/save")
+    public Result save(@RequestBody User user) {
+        userService.save(user);
+        return Result.success("新增成功");
+    }
+
+    @ApiOperation(value = "根据id查找用户", notes = "id必须存在且有效")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "用户id", required = true, paramType = "path", dataType = "String")
+    })
+    @GetMapping("/queryById/{id}")
+    public Result queryById(@PathVariable Long id) {
+        User user = userService.getById(id);
+        if (user == null)
+            throw new ServiceException(ResultCode.DATA_NONE);
+        return Result.success(user);
+    }
+
+    @ApiOperation(value = "设置用户为Vip", notes = "id存在且有效")
+    @PutMapping("/setVip/{id}")
+    public Result setVip(@PathVariable Long id) {
+        userService.setVip(id);
+        return Result.success("更新成功");
+    }
+
+
+    @ApiOperation(value = "更新用户信息", notes = "id必须存在且有效,如果username存在则必须唯一")
+    @PutMapping("/update")
+    public Result update(@RequestBody User user) {
+        boolean b = userService.updateById(user);
+        return Result.success("更新成功");
+    }
 }
 
