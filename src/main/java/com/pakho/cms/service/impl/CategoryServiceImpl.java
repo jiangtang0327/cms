@@ -58,6 +58,58 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         }
 
     }
+
+    @Override
+    public boolean updateById(Category category) {
+        if (category.getId() == null) {
+            // 如果category的id为空，则抛出参数不能为空的异常
+            throw new ServiceException(ResultCode.PARAM_IS_BLANK);
+        }
+        // 将category的id赋值给id变量
+        Integer id = category.getId();
+        // 根据id在categoryMapper中查询categoryOld对象
+        Category categoryOld = categoryMapper.selectById(id);
+
+        if (categoryOld.getParentId() != null && category.getParentId() != null && categoryOld.getParentId().equals(category.getParentId())) {
+            // 如果categoryOld的父级id和category的父级id都不为空，则抛出失败的异常
+            throw new ServiceException(ResultCode.FAILURE);
+        }
+
+
+        if (!categoryOld.getName().equals(category.getName())) {
+            // 获取要更新的category的名称
+            String name = category.getName();
+            // 创建一个LambdaQueryWrapper对象 qw
+            LambdaQueryWrapper<Category> qw = new LambdaQueryWrapper<>();
+            // 设置查询条件，查询名称等于name的category
+            qw.eq(Category::getName, name);
+            // 根据qw查询一个category对象 category1
+            Category category1 = categoryMapper.selectOne(qw);
+            // 如果查询到了category1，抛出DataServiceException异常，异常代码为ResultCode.DATA_EXISTED
+            if (category1 != null) {
+                throw new ServiceException(ResultCode.DATA_EXISTED);
+            }
+        }
+
+        // 获取要插入的category的父级id
+        Integer parentId = category.getParentId();
+        // 如果父级id不为空
+        if (parentId != null) {
+            // 根据父级id查询一个category对象 category1
+            Category category2 = categoryMapper.selectById(parentId);
+            // 如果查询不到category2，抛出DataServiceException异常，异常代码为ResultCode.PARENT_ID_NONE
+            if (category2 == null) {
+                throw new ServiceException(ResultCode.PARENT_ID_NONE);
+            }
+        }
+
+        int i = categoryMapper.updateById(category);
+        if (i <= 0) {
+            throw new ServiceException(ResultCode.FAILURE);
+        }
+
+        return true;
+    }
 }
 
 

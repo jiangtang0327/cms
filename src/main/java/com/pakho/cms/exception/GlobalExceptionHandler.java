@@ -16,6 +16,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public Object handleException(Exception e) {
         log.error(e.getMessage());
+        e.printStackTrace();
         Result result = null;
         if (e instanceof ServiceException) {
             result = Result.failure(((ServiceException) e).getResultCode());
