@@ -2,13 +2,19 @@ package com.pakho.cms.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.pakho.cms.bean.Article;
 import com.pakho.cms.bean.Category;
 import com.pakho.cms.exception.ServiceException;
+import com.pakho.cms.mapper.ArticleMapper;
 import com.pakho.cms.mapper.CategoryMapper;
+import com.pakho.cms.service.ArticleService;
 import com.pakho.cms.service.CategoryService;
 import com.pakho.cms.util.ResultCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author dgvt
@@ -19,6 +25,8 @@ import org.springframework.stereotype.Service;
 public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> implements CategoryService {
     @Autowired
     private CategoryMapper categoryMapper;
+    @Autowired
+    private ArticleMapper articleMapper;
 
     @Override
     public boolean save(Category category) {
@@ -61,6 +69,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
 
     @Override
     public boolean updateById(Category category) {
+        System.out.println(123123123);
         if (category.getId() == null) {
             // 如果category的id为空，则抛出参数不能为空的异常
             throw new ServiceException(ResultCode.PARAM_IS_BLANK);
@@ -108,6 +117,36 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
             throw new ServiceException(ResultCode.FAILURE);
         }
 
+        return true;
+    }
+
+    @Override
+    public boolean removeById(Serializable id) {
+        if (id == null) {
+            throw new ServiceException(ResultCode.PARAM_IS_BLANK);
+        }
+
+        LambdaQueryWrapper<Category> qw = new LambdaQueryWrapper<>();
+        qw.eq(Category::getParentId, id);
+        List<Category> categories = categoryMapper.selectList(qw);
+        if (categories.size() > 0) {
+            throw new ServiceException(ResultCode.FAILURE);
+        }
+
+        Category category = categoryMapper.selectById(id);
+
+        if (category.getParentId() == null) {
+            LambdaQueryWrapper<Article> qw1 = new LambdaQueryWrapper<>();
+            qw1.eq(Article::getCategoryId, id);
+            List<Article> articles = articleMapper.selectList(qw1);
+            if (articles.size() > 0) {
+                throw new ServiceException(ResultCode.FAILURE);
+            }
+        }
+        int i = categoryMapper.deleteById(id);
+        if (i <= 0) {
+            throw new ServiceException(ResultCode.FAILURE);
+        }
         return true;
     }
 }

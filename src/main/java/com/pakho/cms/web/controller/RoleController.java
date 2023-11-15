@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Api(tags = "角色模块")
-@RequestMapping("/auth/role")
+@RequestMapping("/role")
 public class RoleController {
     @Autowired
     private RoleService roleService;
 
     @ApiOperation("获取所有角色信息")
-    @GetMapping("/getAll")
+    @GetMapping("/getAllRole")
     public Result getAll() {
         return Result.success(roleService.list());
     }

@@ -1,6 +1,7 @@
 package com.pakho.cms.web.controller;
 
 import com.pakho.cms.bean.Category;
+import com.pakho.cms.service.ArticleService;
 import com.pakho.cms.service.CategoryService;
 import com.pakho.cms.util.Result;
 import io.swagger.annotations.Api;
@@ -33,6 +34,13 @@ public class CategoryController {
     public Result update(@RequestBody Category category) {
         categoryService.updateById(category);
         return Result.success("修改成功");
+    }
+
+    @ApiOperation(value = "根据id删除栏目", notes = "id必须存在且有效")
+            @DeleteMapping("/deleteById/{id}")
+            public Result deleteById(@PathVariable Integer id){
+            categoryService.removeById(id);
+            return Result.success("删除成功");
     }
 
 }

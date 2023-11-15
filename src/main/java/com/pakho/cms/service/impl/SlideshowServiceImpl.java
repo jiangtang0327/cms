@@ -45,8 +45,6 @@ public class SlideshowServiceImpl extends ServiceImpl<SlideshowMapper, Slideshow
         qw.eq(StringUtils.hasText(status), Slideshow::getStatus, status)
                 .like(StringUtils.hasText(desc), Slideshow::getDescription, desc);
         IPage<Slideshow> slideshowIPage = slideshowMapper.selectPage(p, qw);
-        if (slideshowIPage.getTotal() == 0)
-            throw new ServiceException(ResultCode.DATA_NONE);
         return slideshowIPage;
     }
 

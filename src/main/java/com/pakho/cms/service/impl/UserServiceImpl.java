@@ -81,6 +81,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public boolean updateById(User user) {
+        System.out.println("user = " + user);
         //1.id判断（非空且有效存在）
         Long id = user.getId();
         User dbUser = userMapper.selectById(id);
@@ -95,17 +96,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             if ("".equals(trimName))
                 throw new ServiceException(ResultCode.PARAM_IS_INVALID);
             user.setUsername(trimName);
-
-            LambdaQueryWrapper<User> qw = new LambdaQueryWrapper<>();
-            qw.eq(User::getUsername, trimName);
-            if (userMapper.selectOne(qw) != null)
-                throw new ServiceException(ResultCode.USERNAME_HAS_EXISTED);
-            LambdaUpdateWrapper<User> uq = new LambdaUpdateWrapper<>();
-            uq.set(User::getUsername, newName).eq(User::getId, id);
-            int i = userMapper.update(dbUser, uq);
-            if (i > 0)
-                return true;
         }
+
+        LambdaQueryWrapper<User> qw = new LambdaQueryWrapper<>();
+        qw.eq(User::getUsername, user.getUsername());
+        User user1 = userMapper.selectOne(qw);
+        if (user1!= null)
+            throw new ServiceException(ResultCode.USER_HAS_EXISTED);
+
+        int i = userMapper.updateById(user);
+        System.out.println("i = " + i);
+        if (i > 0)
+            return true;
         return false;
     }
 
@@ -115,8 +117,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new ServiceException(ResultCode.PARAM_IS_BLANK);
         IPage<UserExtend> page = new Page<>(pageNum, pageSize);
         IPage<UserExtend> userExtendIPage = userMapper.queryAllUserWithRole(page, username, status, roleId, isVip);
-        if (userExtendIPage.getRecords().size() == 0)
-            throw new ServiceException(ResultCode.DATA_NONE);
         return userExtendIPage;
     }
 }
