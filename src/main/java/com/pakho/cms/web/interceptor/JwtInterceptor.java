@@ -6,7 +6,6 @@ import com.pakho.cms.util.ResultCode;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -24,7 +23,7 @@ public class JwtInterceptor implements HandlerInterceptor {
         }
 
         // 1.获取请求头信息token
-        String token = request.getHeader("token");
+        String token = request.getHeader("Authorization");
 
         if (token == null) {
             throw new RuntimeException("无token，请重新登录");

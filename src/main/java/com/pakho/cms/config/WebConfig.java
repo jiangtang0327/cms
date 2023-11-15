@@ -14,21 +14,21 @@ public class WebConfig implements WebMvcConfigurer {
 
     public void addInterceptors(InterceptorRegistry registry) {
         // 对swagger的请求不进行拦截
-        String[] excludePatterns = new String[]{
-                "/profile/**",
-                "/common/download**",
-                "/common/download/resource**",
-                "/swagger-ui.html",
-                "/swagger-resources/**",
-                "/webjars/**",
-                "/*/api-docs",
-                "/favicon.ico",
-                "/doc.html",
-                "/error"
-        };
+//        String[] excludePatterns = new String[]{
+//                "/profile/**",
+//                "/common/download**",
+//                "/common/download/resource**",
+//                "/swagger-ui.html",
+//                "/swagger-resources/**",
+//                "/webjars/**",
+//                "/*/api-docs",
+//                "/favicon.ico",
+//                "/doc.html",
+//                "/error"
+//        };
         registry.addInterceptor(jwtInterceptor())
                 .addPathPatterns("/auth/**")
-                .excludePathPatterns(excludePatterns)
+//                .excludePathPatterns(excludePatterns)
                 .excludePathPatterns("/auth/category/queryAllParent",
                         "/auth/comment/queryByArticleId/{id}");
     }
