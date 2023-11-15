@@ -2,6 +2,8 @@ package com.pakho.cms.service;
 
 import com.pakho.cms.bean.Category;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.pakho.cms.mapper.CategoryMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
 * @author dgvt

@@ -1,6 +1,8 @@
 package com.pakho.cms.web.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.pakho.cms.bean.User;
+import com.pakho.cms.bean.extend.UserExtend;
 import com.pakho.cms.exception.ServiceException;
 import com.pakho.cms.service.UserService;
 import com.pakho.cms.util.Result;
@@ -12,6 +14,8 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @Api(tags = "用户模块")
@@ -65,8 +69,32 @@ public class UserController {
     @ApiOperation(value = "更新用户信息", notes = "id必须存在且有效,如果username存在则必须唯一")
     @PutMapping("/update")
     public Result update(@RequestBody User user) {
-        boolean b = userService.updateById(user);
+        userService.updateById(user);
         return Result.success("更新成功");
+    }
+
+
+    @ApiOperation(value = "删除用户", notes = "ids为id数组")
+    @DeleteMapping("/deleteByBatch/{ids}")
+    public Result deleteByBatch(@PathVariable("ids") List<Long> ids) {
+        userService.removeByIds(ids);
+        return Result.success();
+    }
+
+    @ApiOperation(value = "分页+条件查询", notes = "包含角色信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "pageNum", value = "页码", dataType = "int", paramType = "query", required = true, defaultValue = "1"),
+            @ApiImplicitParam(name = "pageSize", value = "每页条数", dataType = "int", paramType = "query", required = true, defaultValue = "5"),
+            @ApiImplicitParam(name = "username", value = "用户名", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "status", value = "状态", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "roleId", value = "角色id", dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "isVip", value = "是否为vip", dataType = "int", paramType = "query")
+    })
+    @GetMapping("/query")
+    public Result query(Integer pageNum, Integer pageSize,
+                        String username, String status, Integer roleId, Integer isVip) {
+        IPage<UserExtend> query = userService.query(pageNum, pageSize, username, status, roleId, isVip);
+        return Result.success(query);
     }
 }
 

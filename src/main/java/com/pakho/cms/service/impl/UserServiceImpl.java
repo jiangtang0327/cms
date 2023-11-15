@@ -2,8 +2,11 @@ package com.pakho.cms.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.pakho.cms.bean.User;
+import com.pakho.cms.bean.extend.UserExtend;
 import com.pakho.cms.exception.ServiceException;
 import com.pakho.cms.mapper.UserMapper;
 import com.pakho.cms.service.UserService;
@@ -13,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author dgvt
@@ -103,6 +107,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 return true;
         }
         return false;
+    }
+
+    @Override
+    public IPage<UserExtend> query(Integer pageNum, Integer pageSize, String username, String status, Integer roleId, Integer isVip) {
+        if (pageNum == null || pageSize == null)
+            throw new ServiceException(ResultCode.PARAM_IS_BLANK);
+        IPage<UserExtend> page = new Page<>(pageNum, pageSize);
+        IPage<UserExtend> userExtendIPage = userMapper.queryAllUserWithRole(page, username, status, roleId, isVip);
+        if (userExtendIPage.getRecords().size() == 0)
+            throw new ServiceException(ResultCode.DATA_NONE);
+        return userExtendIPage;
     }
 }
 

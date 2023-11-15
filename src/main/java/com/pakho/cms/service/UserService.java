@@ -1,7 +1,9 @@
 package com.pakho.cms.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.pakho.cms.bean.User;
+import com.pakho.cms.bean.extend.UserExtend;
 
 /**
  * @author dgvt
@@ -11,4 +13,5 @@ import com.pakho.cms.bean.User;
 public interface UserService extends IService<User> {
     User login(String username, String password);
     void setVip(Long id);
+    IPage<UserExtend> query(Integer pageNum, Integer pageSize, String username, String status, Integer roleId, Integer isVip);
 }

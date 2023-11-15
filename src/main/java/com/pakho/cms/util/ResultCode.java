@@ -35,6 +35,7 @@ public enum ResultCode {
 	SLIDESHOW_NOT_EXISTED(50004, "轮播图不存在"),
 	SLIDESHOW_URL_EXISTED(50005,"轮播图URL已存在"),
 	USERNAME_HAS_EXISTED(50006, "用户名已存在"),
+	PARENT_ID_NONE(50007, "父级ID不存在"),
 	
 	
 	/* 接口错误：60001-69999 */
@@ -45,7 +46,9 @@ public enum ResultCode {
 	INTERFACE_REQUEST_TIMEOUT(60005, "接口请求超时"),
 	
 	/* 权限错误：70001-79999 */
-	PERMISSION_NO_ACCESS(70001, "无访问权限");
+	PERMISSION_NO_ACCESS(70001, "无访问权限"),
+
+	FAILURE(99999, "操作失败");
 
     private Integer code;
 

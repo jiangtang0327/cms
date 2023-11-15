@@ -5,7 +5,7 @@
 <mapper namespace="com.pakho.cms.mapper.RoleMapper">
 
     <resultMap id="BaseResultMap" type="com.pakho.cms.bean.Role">
-            <id property="id" column="id" jdbcType="INTEGER"/>
+            <id property="id" column="rid" jdbcType="INTEGER"/>
             <result property="name" column="name" jdbcType="VARCHAR"/>
             <result property="description" column="description" jdbcType="VARCHAR"/>
     </resultMap>
