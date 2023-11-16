@@ -6,10 +6,12 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.pakho.cms.bean.Article;
 import com.pakho.cms.bean.Category;
+import com.pakho.cms.bean.User;
 import com.pakho.cms.bean.extend.CategoryExtend;
 import com.pakho.cms.exception.ServiceException;
 import com.pakho.cms.mapper.ArticleMapper;
 import com.pakho.cms.mapper.CategoryMapper;
+import com.pakho.cms.mapper.UserMapper;
 import com.pakho.cms.service.CategoryService;
 import com.pakho.cms.util.ResultCode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,8 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
     private CategoryMapper categoryMapper;
     @Autowired
     private ArticleMapper articleMapper;
+    @Autowired
+    private UserMapper userMapper;
 
     @Override
     public boolean save(Category category) {
@@ -59,7 +63,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
                 throw new ServiceException(ResultCode.PARENT_ID_NONE);
             }
         }
-        if(category.getOrderNum()==null)
+        if (category.getOrderNum() == null)
             category.setOrderNum(0);
 
         // 将category对象插入到数据库，返回插入的记录数
@@ -76,45 +80,37 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
 
     @Override
     public boolean updateById(Category category) {
+        // 判断id是否为空
         if (category.getId() == null) {
-            // 如果category的id为空，则抛出参数不能为空的异常
             throw new ServiceException(ResultCode.PARAM_IS_BLANK);
         }
-        // 将category的id赋值给id变量
+
         Integer id = category.getId();
-        // 根据id在categoryMapper中查询categoryOld对象
         Category categoryOld = categoryMapper.selectById(id);
 
+        // 栏目级别不能改动
         if (categoryOld.getParentId() != null && category.getParentId() == null) {
-            throw new ServiceException(ResultCode.FAILURE);
+            throw new ServiceException(ResultCode.CATEGORY_LEVEL_ERROR);
         }
         if (categoryOld.getParentId() == null && category.getParentId() != null) {
-            throw new ServiceException(ResultCode.FAILURE);
+            throw new ServiceException(ResultCode.CATEGORY_LEVEL_ERROR);
         }
 
-
+        // 判断名称是否修改
         if (!categoryOld.getName().equals(category.getName())) {
-            // 获取要更新的category的名称
             String name = category.getName();
-            // 创建一个LambdaQueryWrapper对象 qw
             LambdaQueryWrapper<Category> qw = new LambdaQueryWrapper<>();
-            // 设置查询条件，查询名称等于name的category
             qw.eq(Category::getName, name);
-            // 根据qw查询一个category对象 category1
             Category category1 = categoryMapper.selectOne(qw);
-            // 如果查询到了category1，抛出DataServiceException异常，异常代码为ResultCode.DATA_EXISTED
             if (category1 != null) {
                 throw new ServiceException(ResultCode.DATA_EXISTED);
             }
         }
 
-        // 获取要插入的category的父级id
+        // 判断父级id是否有效
         Integer parentId = category.getParentId();
-        // 如果父级id不为空
         if (parentId != null) {
-            // 根据父级id查询一个category对象 category1
             Category category2 = categoryMapper.selectById(parentId);
-            // 如果查询不到category2，抛出DataServiceException异常，异常代码为ResultCode.PARENT_ID_NONE
             if (category2 == null) {
                 throw new ServiceException(ResultCode.PARENT_ID_NONE);
             }
@@ -130,27 +126,46 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
 
     @Override
     public boolean removeById(Serializable id) {
+        // 判断id
         if (id == null) {
             throw new ServiceException(ResultCode.PARAM_IS_BLANK);
         }
 
-        LambdaQueryWrapper<Category> qw = new LambdaQueryWrapper<>();
-        qw.eq(Category::getParentId, id);
-        List<Category> categories = categoryMapper.selectList(qw);
-        if (categories.size() > 0) {
-            throw new ServiceException(ResultCode.FAILURE);
+        Category category = categoryMapper.selectById(id);
+        System.out.println("category = " + category);
+        if (category == null) {
+            throw new ServiceException(ResultCode.DATA_NONE);
         }
 
-        Category category = categoryMapper.selectById(id);
-
+        // 父级栏目
         if (category.getParentId() == null) {
-            LambdaQueryWrapper<Article> qw1 = new LambdaQueryWrapper<>();
-            qw1.eq(Article::getCategoryId, id);
-            List<Article> articles = articleMapper.selectList(qw1);
-            if (articles.size() > 0) {
+            // 判断该栏目是否存在子节点
+            LambdaQueryWrapper<Category> qw = new LambdaQueryWrapper<>();
+            qw.eq(Category::getParentId, id);
+            List<Category> categories = categoryMapper.selectList(qw);
+            if (categories.size() > 0) {
                 throw new ServiceException(ResultCode.FAILURE);
             }
         }
+        // 子栏目
+        else {
+            // 判断该栏目是否存在文章
+            LambdaQueryWrapper<Article> qw1 = new LambdaQueryWrapper<>();
+            qw1.eq(Article::getCategoryId, id);
+            List<Article> articles = articleMapper.selectList(qw1);
+
+            // 如果栏目底下有文章,则判断用户是否注销
+            if (articles.size() > 0) {
+                for (int i = 0; i < articles.size(); i++) {
+                    Long userId = articles.get(i).getUserId();
+                    User user = userMapper.selectById(userId);
+                    if (user.getDeleted() == 0) {
+                        throw new ServiceException(ResultCode.CATEGORY_EXIST_ARTICLE);
+                    }
+                }
+            }
+        }
+        // 删除该栏目
         int i = categoryMapper.deleteById(id);
         if (i <= 0) {
             throw new ServiceException(ResultCode.FAILURE);
@@ -160,8 +175,18 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
 
     @Override
     public void deleteInBatch(List<Integer> ids) {
+        int j = 0;
         for (int i = 0; i < ids.size(); i++) {
-            this.removeById(ids.get(i));
+            try {
+                boolean b = this.removeById(ids.get(i));
+                if (b){
+                    j++;
+                }
+            } catch (ServiceException e) {
+            }
+        }
+        if (j <= 0) {
+            throw new ServiceException(ResultCode.FAILURE);
         }
     }
 

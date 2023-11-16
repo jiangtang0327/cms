@@ -21,6 +21,7 @@ public enum ResultCode {
 	USER_ACCOUNT_FORBIDDEN(20003, "账号已被禁用"),
 	USER_NOT_EXIST(20004, "用户不存在"),
 	USER_HAS_EXISTED(20005, "用户已存在"),
+	USER_NOT_IS_VIP(20006, "用户不是VIP"),
 	
 	/* 业务错误：30001-39999 */
 	SPECIFIED_QUESTIONED_USER_NOT_EXIST(30001, "业务逻辑出现问题"),
@@ -36,8 +37,9 @@ public enum ResultCode {
 	SLIDESHOW_URL_EXISTED(50005,"轮播图URL已存在"),
 	USERNAME_HAS_EXISTED(50006, "用户名已存在"),
 	PARENT_ID_NONE(50007, "父级ID不存在"),
-	PCATEGORY_IS_INVALID(99998, "父级分类不存在"),
-	
+	PCATEGORY_IS_INVALID(50088, "父级分类不存在"),
+	CATEGORY_EXIST_ARTICLE(50009, "分类下存在文章"),
+	CATEGORY_LEVEL_ERROR(50010, "栏目级别不能改动"),
 	
 	/* 接口错误：60001-69999 */
 	INTERFACE_INNER_INVOKE_ERROR(60001, "内部系统接口调用异常"),

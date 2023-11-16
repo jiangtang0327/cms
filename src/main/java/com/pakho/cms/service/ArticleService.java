@@ -1,8 +1,10 @@
 package com.pakho.cms.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.pakho.cms.bean.Article;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.pakho.cms.bean.extend.ArticleExtend;
+import com.pakho.cms.bean.extend.ArticleParam;
 
 import java.util.List;
 
@@ -15,4 +17,5 @@ public interface ArticleService extends IService<Article> {
     void reviewArticle(Long id, String status);
     void deleteInBatch(List<Long> ids);
     ArticleExtend queryById(Long id);
+    IPage<ArticleExtend> query(ArticleParam articleParam);
 }

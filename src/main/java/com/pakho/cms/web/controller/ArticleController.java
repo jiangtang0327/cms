@@ -1,6 +1,9 @@
 package com.pakho.cms.web.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.pakho.cms.bean.Article;
+import com.pakho.cms.bean.extend.ArticleExtend;
+import com.pakho.cms.bean.extend.ArticleParam;
 import com.pakho.cms.service.ArticleService;
 import com.pakho.cms.util.Result;
 import io.swagger.annotations.Api;
@@ -31,7 +34,7 @@ public class ArticleController {
             @ApiImplicitParam(name = "id", value = "文章id", required = true, dataType = "String"),
             @ApiImplicitParam(name = "status", value = "审核状态", required = true, dataType = "String")
     })
-    @PostMapping("/review")
+    @PostMapping("/reviewArticle")
     public Result reviewArticle(Long id, String status){
         articleService.reviewArticle(id, status);
         return Result.success("审核完成");
@@ -39,21 +42,23 @@ public class ArticleController {
 
     @ApiOperation(value = "删除根据ids文章", notes = "传递的多个用户id，至少有1个存在且有效")
     @DeleteMapping ("/deleteByBatch/{ids}")
-    public Result deleteInBatch(@RequestParam("ids") List<Long> ids){
+    public Result deleteInBatch(@PathVariable List<Long> ids){
         articleService.deleteInBatch(ids);
         return Result.success();
     }
 
     @ApiOperation(value = "根据id查询文章", notes = "文章要包含3条一级评论")
     @GetMapping("/queryById/{id}")
-    public Result queryById(Long id){
-        articleService.queryById(id);
-        return Result.success();
+    public Result queryById(@PathVariable Long id){
+        ArticleExtend articleExtend = articleService.queryById(id);
+        System.out.println("articleExtend = " + articleExtend);
+        return Result.success(articleExtend);
     }
 
-//    @ApiOperation(value = "分页+条件查询文章", notes = "")
-//    @PostMapping("/query")
-//    public Result queryById(@RequestBody ArticleParam articleParam){
-//
-//    }
+    @ApiOperation(value = "分页+条件查询文章", notes = "")
+    @PostMapping("/query")
+    public Result queryById(@RequestBody ArticleParam articleParam){
+        IPage<ArticleExtend> page = articleService.query(articleParam);
+        return Result.success(page);
+    }
 }
