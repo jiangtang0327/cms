@@ -3,6 +3,7 @@ package com.pakho.cms.mapper;
 import com.pakho.cms.bean.Category;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.pakho.cms.bean.extend.CategoryExtend;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ import java.util.List;
 * @createDate 2023-11-14 10:28:41
 * @Entity com.pakho.cms.bean.Category
 */
+@Component
 public interface CategoryMapper extends BaseMapper<Category> {
     List<CategoryExtend> queryAllWithCates();
 }

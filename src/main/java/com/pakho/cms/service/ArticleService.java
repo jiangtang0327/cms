@@ -2,6 +2,9 @@ package com.pakho.cms.service;
 
 import com.pakho.cms.bean.Article;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.pakho.cms.bean.extend.ArticleExtend;
+
+import java.util.List;
 
 /**
 * @author dgvt
@@ -9,5 +12,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 * @createDate 2023-11-14 10:28:41
 */
 public interface ArticleService extends IService<Article> {
-
+    void reviewArticle(Long id, String status);
+    void deleteInBatch(List<Long> ids);
+    ArticleExtend queryById(Long id);
 }

@@ -25,6 +25,12 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @ApiOperation("获取用户列表")
+    @GetMapping("/getAllUser")
+    public Result getAllUser() {
+        return Result.success(userService.list());
+    }
+
     @ApiOperation("获取用户个人信息")
     @GetMapping("/info")
     public Result getInfo(@RequestAttribute("userId") Long id) {
