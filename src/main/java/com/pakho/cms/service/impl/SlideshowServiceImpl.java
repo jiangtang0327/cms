@@ -40,6 +40,7 @@ public class SlideshowServiceImpl extends ServiceImpl<SlideshowMapper, Slideshow
 
     @Override
     public IPage<Slideshow> queryAll(Integer page, Integer pageSize, String status, String desc) {
+//        System.out.println("desc = " + desc);
         IPage<Slideshow> p = new Page<>(page, pageSize);
         LambdaQueryWrapper<Slideshow> qw = new LambdaQueryWrapper<>();
         qw.eq(StringUtils.hasText(status), Slideshow::getStatus, status)
@@ -50,6 +51,9 @@ public class SlideshowServiceImpl extends ServiceImpl<SlideshowMapper, Slideshow
 
     @Override
     public boolean saveOrUpdate(Slideshow slideshow) {
+        if (slideshow.getUrl()==null){
+            throw new ServiceException(ResultCode.PARAM_IS_BLANK);
+        }
         Integer id = slideshow.getId();
         //1.判断轮播图url是否唯一
         String url = slideshow.getUrl();

@@ -36,6 +36,7 @@ public enum ResultCode {
 	SLIDESHOW_URL_EXISTED(50005,"轮播图URL已存在"),
 	USERNAME_HAS_EXISTED(50006, "用户名已存在"),
 	PARENT_ID_NONE(50007, "父级ID不存在"),
+	PCATEGORY_IS_INVALID(99998, "父级分类不存在"),
 	
 	
 	/* 接口错误：60001-69999 */

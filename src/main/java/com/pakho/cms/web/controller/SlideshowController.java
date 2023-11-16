@@ -38,10 +38,9 @@ public class SlideshowController {
             @ApiImplicitParam(name = "desc", value = "描述信息")
     })
     @GetMapping("/query")
-    public Result query(Integer pageNum, Integer pageSize, String status, String desc) {
+    public Result query(Integer pageNum, Integer pageSize, String status,@RequestParam("description") String desc) {
         IPage<Slideshow> slideshowIPage = slideshowService.queryAll(pageNum, pageSize, status, desc);
         return Result.success(slideshowIPage);
-
     }
 
     @ApiOperation(value = "根据id查询轮播图信息",notes = "用于更新时的数据回显")
@@ -63,6 +62,12 @@ public class SlideshowController {
         log.info("ids: {}",ids);
         boolean b = slideshowService.removeByIds(ids);
         return Result.success();
+    }
+
+    @ApiOperation(value = "根据id查找轮播图", notes = "需要提供id值")
+    @GetMapping("/getSlideshowById/{id}")
+    public Result getSlideshowById(@PathVariable Integer id){
+        return Result.success(slideshowService.getById(id));
     }
 
 

@@ -1,13 +1,15 @@
 package com.pakho.cms.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.pakho.cms.bean.Article;
 import com.pakho.cms.bean.Category;
+import com.pakho.cms.bean.extend.CategoryExtend;
 import com.pakho.cms.exception.ServiceException;
 import com.pakho.cms.mapper.ArticleMapper;
 import com.pakho.cms.mapper.CategoryMapper;
-import com.pakho.cms.service.ArticleService;
 import com.pakho.cms.service.CategoryService;
 import com.pakho.cms.util.ResultCode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,9 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
 
     @Override
     public boolean save(Category category) {
+        if (category.getName() == null) {
+            throw new ServiceException(ResultCode.PARAM_IS_BLANK);
+        }
         // 获取要插入的category的名称
         String name = category.getName();
         // 创建一个LambdaQueryWrapper对象 qw
@@ -54,6 +59,8 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
                 throw new ServiceException(ResultCode.PARENT_ID_NONE);
             }
         }
+        if(category.getOrderNum()==null)
+            category.setOrderNum(0);
 
         // 将category对象插入到数据库，返回插入的记录数
         int insert = categoryMapper.insert(category);
@@ -69,7 +76,6 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
 
     @Override
     public boolean updateById(Category category) {
-        System.out.println(123123123);
         if (category.getId() == null) {
             // 如果category的id为空，则抛出参数不能为空的异常
             throw new ServiceException(ResultCode.PARAM_IS_BLANK);
@@ -79,8 +85,10 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         // 根据id在categoryMapper中查询categoryOld对象
         Category categoryOld = categoryMapper.selectById(id);
 
-        if (categoryOld.getParentId() != null && category.getParentId() != null && categoryOld.getParentId().equals(category.getParentId())) {
-            // 如果categoryOld的父级id和category的父级id都不为空，则抛出失败的异常
+        if (categoryOld.getParentId() != null && category.getParentId() == null) {
+            throw new ServiceException(ResultCode.FAILURE);
+        }
+        if (categoryOld.getParentId() == null && category.getParentId() != null) {
             throw new ServiceException(ResultCode.FAILURE);
         }
 
@@ -148,6 +156,35 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
             throw new ServiceException(ResultCode.FAILURE);
         }
         return true;
+    }
+
+    @Override
+    public void deleteInBatch(List<Integer> ids) {
+        for (int i = 0; i < ids.size(); i++) {
+            this.removeById(ids.get(i));
+        }
+    }
+
+    @Override
+    public IPage<Category> query(Integer pageNum, Integer pageSize, Integer parentId) {
+        if (pageNum == null || pageNum <= 0 || pageSize == null || pageSize <= 0)
+            throw new ServiceException(ResultCode.PARAM_IS_INVALID);
+
+        IPage<Category> p = new Page<>(pageNum, pageSize);
+        LambdaQueryWrapper<Category> qw = new LambdaQueryWrapper<>();
+
+        qw.eq(parentId != null, Category::getParentId, parentId);
+        qw.orderByAsc(Category::getParentId)
+                .orderByAsc(Category::getOrderNum);
+        categoryMapper.selectPage(p, qw);
+
+        return p;
+    }
+
+    @Override
+    public List<CategoryExtend> queryAllParent() {
+        List<CategoryExtend> categoryExtends = categoryMapper.queryAllWithCates();
+        return categoryExtends;
     }
 }
 

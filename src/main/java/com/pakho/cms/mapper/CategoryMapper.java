@@ -2,6 +2,9 @@ package com.pakho.cms.mapper;
 
 import com.pakho.cms.bean.Category;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.pakho.cms.bean.extend.CategoryExtend;
+
+import java.util.List;
 
 /**
 * @author dgvt
@@ -10,7 +13,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @Entity com.pakho.cms.bean.Category
 */
 public interface CategoryMapper extends BaseMapper<Category> {
-
+    List<CategoryExtend> queryAllWithCates();
 }
 
 
