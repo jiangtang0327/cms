@@ -1,7 +1,6 @@
 package com.pakho.cms.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -16,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author dgvt
@@ -81,31 +79,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public boolean updateById(User user) {
-        System.out.println("user = " + user);
-        //1.id判断（非空且有效存在）
+        //参数为空
+        if (user == null || user.getId() == null)
+            throw new ServiceException(ResultCode.PARAM_IS_BLANK);
+
+        //用户名为空
         Long id = user.getId();
-        User dbUser = userMapper.selectById(id);
-        if (id == null || dbUser == null)
-            throw new ServiceException(ResultCode.PARAM_IS_INVALID);
-
+        User userOld = userMapper.selectById(id);
+        String oldName = userOld.getUsername();
         String newName = user.getUsername();
-        String oldName = dbUser.getUsername();
-
-        if (newName != null && !newName.equals(oldName)) {
-            String trimName = newName.trim();
-            if ("".equals(trimName))
-                throw new ServiceException(ResultCode.PARAM_IS_INVALID);
-            user.setUsername(trimName);
+        if("".equals(newName) || newName == null){
+            throw new ServiceException(ResultCode.PARAM_IS_BLANK);
         }
 
-        LambdaQueryWrapper<User> qw = new LambdaQueryWrapper<>();
-        qw.eq(User::getUsername, user.getUsername());
-        User user1 = userMapper.selectOne(qw);
-        if (user1!= null)
-            throw new ServiceException(ResultCode.USER_HAS_EXISTED);
+        // 判断用户名是否重复
+        if (!oldName.equals(newName)){
+            User user1 = userMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUsername, newName));
+            if (user1!= null)
+                throw new ServiceException(ResultCode.USER_HAS_EXISTED);
+        }
 
         int i = userMapper.updateById(user);
-        System.out.println("i = " + i);
         if (i > 0)
             return true;
         return false;

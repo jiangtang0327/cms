@@ -209,6 +209,10 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         for (int i = 0; i < articles.size(); i++) {
             // 封装作者信息
             User user = userMapper.selectById(articles.get(i).getUserId());
+            // 验证作者,作者不存在则跳过
+            if (user == null) {
+                continue;
+            }
             user.setPassword("******");
             ArticleExtend articleExtend = new ArticleExtend();
             articleExtend.setAuthor(user);
