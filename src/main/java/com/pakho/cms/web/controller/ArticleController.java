@@ -51,7 +51,6 @@ public class ArticleController {
     @GetMapping("/queryById/{id}")
     public Result queryById(@PathVariable Long id){
         ArticleExtend articleExtend = articleService.queryById(id);
-        System.out.println("articleExtend = " + articleExtend);
         return Result.success(articleExtend);
     }
 

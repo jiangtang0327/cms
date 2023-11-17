@@ -18,6 +18,7 @@ import com.pakho.cms.mapper.UserMapper;
 import com.pakho.cms.service.ArticleService;
 import com.pakho.cms.util.JwtUtil;
 import com.pakho.cms.util.ResultCode;
+import com.pakho.cms.util.redis.RedisUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,7 @@ import java.util.List;
  */
 @Service
 public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> implements ArticleService {
+    private final String REDIS_KEY = "Article_Read_Num";
     @Autowired
     private ArticleMapper articleMapper;
     @Autowired
@@ -45,34 +47,43 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     private CommentMapper commentMapper;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private RedisUtil redisUtil;
 
     @Override
     public boolean saveOrUpdate(Article article) {
+        // 校验参数
         if (article == null) {
             throw new ServiceException(ResultCode.PARAM_IS_BLANK);
         }
 
+        // 校验分类
         Integer categoryId = article.getCategoryId();
         if (categoryId == null) {
             throw new ServiceException(ResultCode.PARAM_IS_BLANK);
         }
-
         Category category = categoryMapper.selectById(categoryId);
         if (category == null || category.getParentId() == null) {
             throw new ServiceException(ResultCode.PARAM_IS_INVALID);
         }
 
         Long id = article.getId();
+        // 新增
         if (id == null) {
-            long userId = Long.parseLong(JwtUtil.getUserId(getToken()));
+            String token = JwtUtil.getUserId(getToken());
+            long userId = Long.parseLong(token);
             article.setUserId(userId);
             article.setPublishTime(new Date());
             articleMapper.insert(article);
-        } else {
-            Category category1 = categoryMapper.selectById(id);
-            if (category1 == null) {
+        }
+        // 修改
+        else {
+            // 校验文章
+            Article article1 = articleMapper.selectById(id);
+            if (article1 == null) {
                 throw new ServiceException(ResultCode.PARAM_IS_INVALID);
             }
+            article.setStatus("未审核");
             articleMapper.updateById(article);
         }
         return true;
@@ -119,9 +130,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         }
 
         // 审核通过的文章才可以被查询
-        if (!article.getStatus().equals("审核通过")) {
-            throw new ServiceException(ResultCode.DATA_NONE);
-        }
+//        if (!article.getStatus().equals("审核通过")) {
+//            throw new ServiceException(ResultCode.DATA_NONE);
+//        }
 
         // 验证作者
         Long authorId = article.getUserId();
@@ -131,10 +142,20 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         }
 
         // 验证vip和文章是否收费，用户是否是作者
-        String userId = JwtUtil.getUserId(getToken());
-        User user = userMapper.selectById(userId);
-        if (user.getIsVip() != 1 && article.getCharged() == 1 && userId.equals(Long.toString(authorId))) {
-            throw new ServiceException(ResultCode.USER_NOT_IS_VIP);
+        String token = getToken();
+        // 未登录，判断是否是收费文章
+        if (token == null) {
+            if (article.getCharged() == 1) {
+                throw new ServiceException(ResultCode.USER_NOT_IS_VIP);
+            }
+        }
+        // 已登录
+        else {
+            String userId = JwtUtil.getUserId(token);
+            User user = userMapper.selectById(userId);
+            if (user.getIsVip() != 1 && article.getCharged() == 1 && userId.equals(Long.toString(authorId))) {
+                throw new ServiceException(ResultCode.USER_NOT_IS_VIP);
+            }
         }
 
         // 查询文章的评论
@@ -149,6 +170,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         BeanUtils.copyProperties(article, articleExtend);
         articleExtend.setAuthor(author);
         articleExtend.setComments(comments);
+
+        // 10.浏览量自增
+        articleExtend.setReadNum(redisUtil.increment(REDIS_KEY,article.getId().toString()));
 
         return articleExtend;
     }
