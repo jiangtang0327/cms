@@ -28,7 +28,7 @@ public class WebConfig implements WebMvcConfigurer {
 //        };
         registry.addInterceptor(jwtInterceptor())
                 .addPathPatterns("/auth/**")
-//                .excludePathPatterns(excludePatterns)
+                .excludePathPatterns("/auth/article/query","/auth/article/queryById/**")
                 .excludePathPatterns("/auth/category/queryAllParent",
                         "/auth/comment/queryByArticleId/{id}");
     }
