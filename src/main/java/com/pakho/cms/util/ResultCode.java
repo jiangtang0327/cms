@@ -40,6 +40,8 @@ public enum ResultCode {
 	PCATEGORY_IS_INVALID(50088, "父级分类不存在"),
 	CATEGORY_EXIST_ARTICLE(50009, "分类下存在文章"),
 	CATEGORY_LEVEL_ERROR(50010, "栏目级别不能改动"),
+	//作者账号为不存在
+	AUTHOR_NOT_EXIST(50011, "作者账号不存在"),
 	
 	/* 接口错误：60001-69999 */
 	INTERFACE_INNER_INVOKE_ERROR(60001, "内部系统接口调用异常"),

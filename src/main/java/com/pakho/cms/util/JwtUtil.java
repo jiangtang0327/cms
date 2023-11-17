@@ -3,7 +3,10 @@ package com.pakho.cms.util;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.Map;
 
@@ -56,6 +59,18 @@ public class JwtUtil {
         Claims claims = parseJWT(token);
         String id = claims.get("userId").toString();
         return id;
+    }
+
+    /**
+     * 获取token
+     *
+     * @return {@link String}
+     */
+    public static String getToken() {
+        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes(); // 获取当前请求的属性
+        HttpServletRequest request = requestAttributes.getRequest(); // 获取当前请求
+        String token = request.getHeader("Authorization");
+        return token; // 返回token
     }
 
 }

@@ -9,7 +9,7 @@ import com.pakho.cms.bean.Category;
 import com.pakho.cms.bean.Comment;
 import com.pakho.cms.bean.User;
 import com.pakho.cms.bean.extend.ArticleExtend;
-import com.pakho.cms.bean.extend.ArticleParam;
+import com.pakho.cms.bean.vo.ArticleParam;
 import com.pakho.cms.exception.ServiceException;
 import com.pakho.cms.mapper.ArticleMapper;
 import com.pakho.cms.mapper.CategoryMapper;
@@ -23,10 +23,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -70,7 +67,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         Long id = article.getId();
         // 新增
         if (id == null) {
-            String token = JwtUtil.getUserId(getToken());
+            String token = JwtUtil.getUserId(JwtUtil.getToken());
             long userId = Long.parseLong(token);
             article.setUserId(userId);
             article.setPublishTime(new Date());
@@ -142,7 +139,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         }
 
         // 验证vip和文章是否收费，用户是否是作者
-        String token = getToken();
+        String token = JwtUtil.getToken();
         // 未登录，判断是否是收费文章
         if (token == null) {
             if (article.getCharged() == 1) {
@@ -176,19 +173,6 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
         return articleExtend;
     }
-
-    /**
-     * 获取token
-     *
-     * @return {@link String}
-     */
-    private String getToken() {
-        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes(); // 获取当前请求的属性
-        HttpServletRequest request = requestAttributes.getRequest(); // 获取当前请求
-        String token = request.getHeader("Authorization");
-        return token; // 返回token
-    }
-
 
     public IPage<ArticleExtend> query(ArticleParam param) {
         // 创建条件构造器，并查询

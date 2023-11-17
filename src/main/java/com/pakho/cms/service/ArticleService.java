@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.pakho.cms.bean.Article;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.pakho.cms.bean.extend.ArticleExtend;
-import com.pakho.cms.bean.extend.ArticleParam;
+import com.pakho.cms.bean.vo.ArticleParam;
 
 import java.util.List;
 

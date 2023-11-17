@@ -1,4 +1,4 @@
-package com.pakho.cms.bean.extend;
+package com.pakho.cms.bean.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.pakho.cms.bean.Article;

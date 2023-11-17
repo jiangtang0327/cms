@@ -3,7 +3,7 @@ package com.pakho.cms.web.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.pakho.cms.bean.Article;
 import com.pakho.cms.bean.extend.ArticleExtend;
-import com.pakho.cms.bean.extend.ArticleParam;
+import com.pakho.cms.bean.vo.ArticleParam;
 import com.pakho.cms.service.ArticleService;
 import com.pakho.cms.util.Result;
 import io.swagger.annotations.Api;
