@@ -1,5 +1,6 @@
 package com.pakho.cms.web.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.pakho.cms.bean.Article;
 import com.pakho.cms.bean.extend.ArticleExtend;
@@ -59,5 +60,12 @@ public class ArticleController {
     public Result queryById(@RequestBody ArticleParam articleParam){
         IPage<ArticleExtend> page = articleService.query(articleParam);
         return Result.success(page);
+    }
+
+    @ApiOperation(value = "查询所有文章", notes = "查询所有文章")
+    @GetMapping("/getAllArticle")
+    public Result getAllArticle(){
+        List<Article> list = articleService.list(null);
+        return Result.success(list);
     }
 }

@@ -1,18 +1,23 @@
 package com.pakho.cms.mapper;
 
-import com.pakho.cms.bean.Comment;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.pakho.cms.bean.Comment;
+import com.pakho.cms.bean.extend.CommentExtend;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
+import java.util.List;
+
 /**
-* @author dgvt
-* @description 针对表【cms_comment】的数据库操作Mapper
-* @createDate 2023-11-14 10:28:41
-* @Entity com.pakho.cms.bean.Comment
-*/
+ * @author dgvt
+ * @description 针对表【cms_comment】的数据库操作Mapper
+ * @createDate 2023-11-14 10:28:41
+ * @Entity com.pakho.cms.bean.Comment
+ */
 @Component
 public interface CommentMapper extends BaseMapper<Comment> {
-
 }
 
 

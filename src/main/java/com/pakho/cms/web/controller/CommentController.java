@@ -6,6 +6,7 @@ import com.pakho.cms.bean.Subcomment;
 import com.pakho.cms.bean.extend.CommentExtend;
 import com.pakho.cms.bean.extend.SubCommentExtend;
 import com.pakho.cms.bean.vo.CommentDeleteParam;
+import com.pakho.cms.bean.vo.CommentQueryParam;
 import com.pakho.cms.service.CommentService;
 import com.pakho.cms.util.Result;
 import io.swagger.annotations.Api;
@@ -70,4 +71,13 @@ public class CommentController {
         IPage<CommentExtend> page = commentService.queryByArticleId(pageNum, pageSize, id);
         return Result.success(page);
     }
+
+    @ApiOperation(value = "分页+条件查询", notes = "查询条件：关键字、userId、articleId、发表时间范围")
+    @PostMapping("/query")
+    public Result query(@RequestBody CommentQueryParam commentQueryParam) {
+        IPage<CommentExtend> page = commentService.query(commentQueryParam);
+        return Result.success(page);
+    }
+
+
 }

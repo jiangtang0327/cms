@@ -7,6 +7,7 @@ import com.pakho.cms.bean.Subcomment;
 import com.pakho.cms.bean.extend.CommentExtend;
 import com.pakho.cms.bean.extend.SubCommentExtend;
 import com.pakho.cms.bean.vo.CommentDeleteParam;
+import com.pakho.cms.bean.vo.CommentQueryParam;
 import com.pakho.cms.exception.ServiceException;
 import com.pakho.cms.mapper.SubcommentMapper;
 import com.pakho.cms.util.ResultCode;
@@ -26,4 +27,5 @@ public interface CommentService extends IService<Comment> {
     void deleteInBatch(List<CommentDeleteParam> list);
     List<SubCommentExtend> queryByCommentId(Long id);
     IPage<CommentExtend> queryByArticleId(Integer pageNum, Integer pageSize, Long id);
+    IPage<CommentExtend> query(CommentQueryParam commentQueryParam);
 }

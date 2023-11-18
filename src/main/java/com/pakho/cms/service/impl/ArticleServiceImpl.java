@@ -187,6 +187,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                 .lt(param.getEndTime() != null, Article::getPublishTime, param.getEndTime());
         articleMapper.selectPage(page, qw);
 
+
         List<Article> articles = page.getRecords();
         List<ArticleExtend> articleExtends = new ArrayList<>();
 
@@ -210,6 +211,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         articlePage.setRecords(articleExtends);
         articlePage.setCurrent(page.getCurrent());
         articlePage.setTotal(page.getTotal());
+        articlePage.setSize(page.getSize());
+        articlePage.setPages(page.getPages());
 
         return articlePage;
     }

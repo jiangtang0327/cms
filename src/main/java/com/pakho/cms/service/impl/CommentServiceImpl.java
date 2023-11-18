@@ -11,6 +11,7 @@ import com.pakho.cms.bean.User;
 import com.pakho.cms.bean.extend.CommentExtend;
 import com.pakho.cms.bean.extend.SubCommentExtend;
 import com.pakho.cms.bean.vo.CommentDeleteParam;
+import com.pakho.cms.bean.vo.CommentQueryParam;
 import com.pakho.cms.exception.ServiceException;
 import com.pakho.cms.mapper.ArticleMapper;
 import com.pakho.cms.mapper.CommentMapper;
@@ -22,6 +23,7 @@ import com.pakho.cms.util.ResultCode;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -248,6 +250,53 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 //        List<Comment> comments = commentMapper.selectList(new LambdaQueryWrapper<Comment>().eq(Comment::getArticleId, id));
         LambdaQueryWrapper<Comment> eq = new LambdaQueryWrapper<Comment>().eq(Comment::getArticleId, id);
         IPage<Comment> commentPage = commentMapper.selectPage(new Page<>(pageNum, pageSize), eq);
+        List<Comment> comments = commentPage.getRecords();
+
+        List<CommentExtend> commentExtendList = new ArrayList<>();
+        for (Comment comment : comments) {
+            // 获取作者
+            Long userId = comment.getUserId();
+            if (userId == null)
+                continue;
+            User user = userMapper.selectById(userId);
+            // 获取二级评论
+            List<SubCommentExtend> list = queryByCommentId(comment.getId());
+
+            // 封装评论
+            CommentExtend commentExtend = new CommentExtend();
+            BeanUtils.copyProperties(comment, commentExtend);
+            user.setPassword("******");
+            commentExtend.setAuthor(user);
+            commentExtend.setChildComments(list);
+            commentExtendList.add(commentExtend);
+        }
+
+        // 封装分页
+        IPage<CommentExtend> page = new Page<>();
+        page.setRecords(commentExtendList);
+        page.setCurrent(commentPage.getCurrent());
+        page.setTotal(commentPage.getTotal());
+        page.setPages(commentPage.getPages());
+        page.setSize(commentPage.getSize());
+        return page;
+    }
+
+    @Override
+    public IPage<CommentExtend> query(CommentQueryParam commentQueryParam) {
+        if (commentQueryParam == null)
+            throw new ServiceException(ResultCode.PARAM_IS_BLANK);
+        if (commentQueryParam.getPageNum() == null || commentQueryParam.getPageSize() == null)
+            throw new ServiceException(ResultCode.PARAM_IS_BLANK);
+
+        // 分页获取一级评论
+        IPage<Comment> commentPage = new Page<>();
+        LambdaQueryWrapper<Comment> qw = new LambdaQueryWrapper<>();
+        qw.like(StringUtils.hasText(commentQueryParam.getKeyword()), Comment::getContent, commentQueryParam.getKeyword())
+                .eq(commentQueryParam.getUserId() != null, Comment::getUserId, commentQueryParam.getUserId())
+                .eq(commentQueryParam.getArticleId() != null, Comment::getArticleId, commentQueryParam.getArticleId())
+                .gt(commentQueryParam.getStartTime() != null, Comment::getPublishTime, commentQueryParam.getStartTime())
+                .lt(commentQueryParam.getEndTime() != null, Comment::getPublishTime, commentQueryParam.getEndTime());
+        commentMapper.selectPage(commentPage, qw);
         List<Comment> comments = commentPage.getRecords();
 
         List<CommentExtend> commentExtendList = new ArrayList<>();
