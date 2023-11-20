@@ -25,7 +25,6 @@ public class CategoryParentIdConverter implements Converter<Integer> {
 
 	public static List<Category> list;
 
-
 	/**
 	 * 开启对Integer的支持
 	 *

@@ -78,8 +78,7 @@ public class ExcelUtils {
 	 * 无需注册自定义类型转换时导出使用
 	 */
 	@SneakyThrows
-	public <T> void exportExcel(HttpServletResponse response, List<T> list, Class<T> tClass,
-	                            String fileName) {
+	public <T> void exportExcel(HttpServletResponse response, List<T> list, Class<T> tClass, String fileName) {
 		exportExcel(response, list, tClass, fileName, (Converter<?>[]) null);
 	}
 
@@ -93,8 +92,7 @@ public class ExcelUtils {
 	 * @param converters 自定义参数转换器列表
 	 */
 	@SneakyThrows
-	public <T> void exportExcel(HttpServletResponse response, List<T> list, Class<T> tClass,
-	                            String fileName, Converter<?>... converters) {
+	public <T> void exportExcel(HttpServletResponse response, List<T> list, Class<T> tClass, String fileName, Converter<?>... converters) {
 		//获取输出流
 		@Cleanup
 		OutputStream outputStream = response.getOutputStream();

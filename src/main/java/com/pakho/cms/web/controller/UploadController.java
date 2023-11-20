@@ -1,5 +1,6 @@
 package com.pakho.cms.web.controller;
 
+import com.pakho.cms.aop.Logging;
 import com.pakho.cms.util.Result;
 import com.pakho.cms.util.UploadUtils;
 import io.swagger.annotations.Api;
@@ -20,6 +21,7 @@ public class UploadController {
     private UploadUtils uploadUtils;
 
     @ApiOperation("文件上传")
+    @Logging(value = "文件上传")
     @PostMapping("upload")
     @SneakyThrows //帮助处理 编译时异常
     public Result upload(@RequestPart MultipartFile img){

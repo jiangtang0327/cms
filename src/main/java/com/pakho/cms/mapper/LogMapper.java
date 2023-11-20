@@ -2,6 +2,7 @@ package com.pakho.cms.mapper;
 
 import com.pakho.cms.bean.Log;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.springframework.stereotype.Component;
 
 /**
 * @author dgvt
@@ -9,6 +10,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @createDate 2023-11-14 10:28:41
 * @Entity com.pakho.cms.bean.Log
 */
+@Component
 public interface LogMapper extends BaseMapper<Log> {
 
 }

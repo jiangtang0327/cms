@@ -1,6 +1,7 @@
 package com.pakho.cms.web.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.pakho.cms.aop.Logging;
 import com.pakho.cms.bean.User;
 import com.pakho.cms.bean.extend.UserExtend;
 import com.pakho.cms.exception.ServiceException;
@@ -46,6 +47,7 @@ public class UserController {
     }
 
     @ApiOperation(value = "新增用户", notes = "username、password必须存在不为空，且username唯一")
+    @Logging(value = "新增用户")
     @PostMapping("/save")
     public Result save(@RequestBody User user) {
         userService.save(user);
@@ -65,6 +67,7 @@ public class UserController {
     }
 
     @ApiOperation(value = "设置用户为Vip", notes = "id存在且有效")
+    @Logging(value = "设置用户为Vip")
     @PutMapping("/setVip/{id}")
     public Result setVip(@PathVariable Long id) {
         userService.setVip(id);
@@ -73,6 +76,7 @@ public class UserController {
 
 
     @ApiOperation(value = "更新用户信息", notes = "id必须存在且有效,如果username存在则必须唯一")
+    @Logging(value = "更新用户信息")
     @PutMapping("/update")
     public Result update(@RequestBody User user) {
         userService.updateById(user);
@@ -81,6 +85,7 @@ public class UserController {
 
 
     @ApiOperation(value = "删除用户", notes = "ids为id数组")
+    @Logging(value = "删除用户")
     @DeleteMapping("/deleteByBatch/{ids}")
     public Result deleteByBatch(@PathVariable("ids") List<Long> ids) {
         userService.removeByIds(ids);

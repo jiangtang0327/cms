@@ -2,6 +2,7 @@ package com.pakho.cms.web.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.pakho.cms.aop.Logging;
 import com.pakho.cms.bean.Category;
 import com.pakho.cms.bean.extend.CategoryExtend;
 import com.pakho.cms.service.CategoryService;
@@ -32,6 +33,7 @@ public class CategoryController {
 
 
     @ApiOperation(value = "新增栏目", notes = "栏目名必须唯一，如果为二级栏目则其父栏目id必须有效")
+    @Logging(value = "新增栏目")
     @PostMapping("/save")
     public Result save(@RequestBody Category category) {
         categoryService.save(category);
@@ -45,6 +47,7 @@ public class CategoryController {
     }
 
     @ApiOperation(value = "更新栏目", notes = "栏目名必须唯一，栏目级别不能改动")
+    @Logging(value = "更新栏目")
     @PostMapping("/update")
     public Result update(@RequestBody Category category) {
         categoryService.updateById(category);
@@ -52,6 +55,7 @@ public class CategoryController {
     }
 
     @ApiOperation(value = "根据id删除栏目", notes = "id必须存在且有效")
+    @Logging(value = "根据id删除栏目")
     @DeleteMapping("/deleteById/{id}")
     public Result deleteById(@PathVariable Integer id) {
         categoryService.removeById(id);
@@ -59,6 +63,7 @@ public class CategoryController {
     }
 
     @ApiOperation(value = "批量删除栏目", notes = "需要提供一个或多个id值")
+    @Logging(value = "批量删除栏目")
     @DeleteMapping("/deleteByIdAll/{ids}")
     public Result deleteCategoryInBatch(@PathVariable List<Integer> ids) {
         categoryService.deleteInBatch(ids);
@@ -94,10 +99,12 @@ public class CategoryController {
     }
 
     @ApiOperation("导入栏目数据")
+    @Logging(value = "导入栏目数据")
     @PostMapping("/import")
     public Result imports(@RequestPart MultipartFile file) {
         LambdaQueryWrapper<Category> qw = new LambdaQueryWrapper<>();
         qw.isNull(Category::getParentId);
+
         CategoryParentIdConverter.list = categoryService.list(qw);
 
         List<Category> list = excelUtils.importData(file, Category.class, new CategoryListener());

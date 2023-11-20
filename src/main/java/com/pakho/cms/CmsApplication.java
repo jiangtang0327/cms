@@ -6,10 +6,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @MapperScan("com.pakho.cms.mapper")
-public class CmsDemoApplication {
+public class CmsApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(CmsDemoApplication.class, args);
+        SpringApplication.run(CmsApplication.class, args);
     }
 
 }

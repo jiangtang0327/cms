@@ -1,6 +1,7 @@
 package com.pakho.cms.web.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.pakho.cms.aop.Logging;
 import com.pakho.cms.bean.Comment;
 import com.pakho.cms.bean.Subcomment;
 import com.pakho.cms.bean.extend.CommentExtend;
@@ -26,6 +27,7 @@ public class CommentController {
     private CommentService commentService;
 
     @ApiOperation(value = "新增一级评论", notes = "一级评论直接对文章进行评论")
+    @Logging(value = "新增一级评论")
     @PostMapping("/saveComment")
     public Result saveComment(@RequestBody Comment comment) {
         commentService.saveComment(comment);
@@ -33,6 +35,7 @@ public class CommentController {
     }
 
     @ApiOperation(value = "新增二级评论", notes = "二级评论是对评论的回复")
+    @Logging(value = "新增二级评论")
     @PostMapping("/saveSubComment")
     public Result saveSubComment(@RequestBody Subcomment subcomment) {
         commentService.saveSubComment(subcomment);
@@ -40,6 +43,7 @@ public class CommentController {
     }
 
     @ApiOperation(value = "根据id删除评论", notes = "type为1表示1级评论，为2表示2级评论")
+    @Logging(value = "根据id删除评论")
     @DeleteMapping("/deleteById")
     public Result deleteById(@RequestBody CommentDeleteParam commentDeleteParam) {
         commentService.deleteById(commentDeleteParam);
@@ -47,6 +51,7 @@ public class CommentController {
     }
 
     @ApiOperation(value = "根据id批量删除评论", notes = "type为1表示1级评论，为2表示2级评论")
+    @Logging(value = "根据id批量删除评论")
     @DeleteMapping("/deleteByIdAll")
     public Result deleteByIdAll(@RequestBody List<CommentDeleteParam> list) {
         commentService.deleteInBatch(list);

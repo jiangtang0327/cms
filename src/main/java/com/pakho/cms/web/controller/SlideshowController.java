@@ -2,6 +2,7 @@ package com.pakho.cms.web.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
+import com.pakho.cms.aop.Logging;
 import com.pakho.cms.bean.Slideshow;
 import com.pakho.cms.service.SlideshowService;
 import com.pakho.cms.util.Result;
@@ -50,6 +51,7 @@ public class SlideshowController {
     }
 
     @ApiOperation(value = "新增或更新轮播图", notes = "slideshow参数包含id值则为更新，不包含i为新增")
+    @Logging(value = "新增或更新轮播图")
     @PostMapping("/saveOrUpdate")
     public Result saveOrUpdate(@RequestBody Slideshow slideshow) {
         slideshowService.saveOrUpdate(slideshow);
@@ -57,6 +59,7 @@ public class SlideshowController {
     }
 
     @ApiOperation(value = "批量删除轮播图", notes = "需要提供多个id值")
+    @Logging(value = "批量删除轮播图")
     @DeleteMapping("/deleteByBatch/{ids}")
     public Result deleteSlideshowInBatch(@PathVariable List<Integer>ids){
         log.info("ids: {}",ids);
