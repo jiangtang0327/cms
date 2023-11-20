@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.pakho.cms.mapper.ArticleMapper">
+<mapper namespace="com.it.cms.mapper.ArticleMapper">
 
-    <resultMap id="BaseResultMap" type="com.pakho.cms.bean.Article">
+    <resultMap id="BaseResultMap" type="com.it.cms.bean.Article">
             <id property="id" column="id" jdbcType="BIGINT"/>
             <result property="title" column="title" jdbcType="VARCHAR"/>
             <result property="content" column="content" jdbcType="VARCHAR"/>

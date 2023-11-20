@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.pakho.cms.mapper.CategoryMapper">
+<mapper namespace="com.it.cms.mapper.CategoryMapper">
 
-    <resultMap id="BaseResultMap" type="com.pakho.cms.bean.Category">
+    <resultMap id="BaseResultMap" type="com.it.cms.bean.Category">
         <id property="id" column="id" jdbcType="INTEGER"/>
         <result property="name" column="name" jdbcType="VARCHAR"/>
         <result property="description" column="description" jdbcType="VARCHAR"/>
@@ -13,7 +13,7 @@
         <result property="parentId" column="parent_id" jdbcType="INTEGER"/>
     </resultMap>
 
-    <resultMap id="ExtendResultMap" type="com.pakho.cms.bean.extend.CategoryExtend"
+    <resultMap id="ExtendResultMap" type="com.it.cms.bean.extend.CategoryExtend"
                extends="BaseResultMap">
         <association property="cates" column="id" select="queryByParentId"/>
     </resultMap>

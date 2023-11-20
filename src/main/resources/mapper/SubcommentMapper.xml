@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.pakho.cms.mapper.SubcommentMapper">
+<mapper namespace="com.it.cms.mapper.SubcommentMapper">
 
-    <resultMap id="BaseResultMap" type="com.pakho.cms.bean.Subcomment">
+    <resultMap id="BaseResultMap" type="com.it.cms.bean.Subcomment">
             <id property="id" column="id" jdbcType="BIGINT"/>
             <result property="content" column="content" jdbcType="VARCHAR"/>
             <result property="publishTime" column="publish_time" jdbcType="TIMESTAMP"/>
