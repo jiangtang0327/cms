@@ -68,13 +68,13 @@
             <version>4.1.0</version>
         </dependency>
 
-<!--        七牛云-->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
             <version>0.9.1</version>
         </dependency>
 
+        <!--        七牛云-->
         <dependency>
             <groupId>com.qiniu</groupId>
             <artifactId>qiniu-java-sdk</artifactId>
@@ -138,6 +138,30 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+            <!-- docker插件-->
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>1.0.0</version>
+
+                <configuration>
+                    <!-- 远程Docker的地址 -->
+                    <dockerHost>http://47.115.215.176:2375</dockerHost>
+                    <!-- 镜像名称、前缀、项目名 -->
+                    <imageName>cms</imageName>
+                    <!-- Dockerfile的位置 -->
+                    <dockerDirectory>src/main/docker</dockerDirectory>
+                    <resources>
+                        <resource>
+                            <targetPath>/</targetPath>
+                            <!-- 表示的target文件夹 -->
+                            <directory>${project.build.directory}</directory>
+                            <!-- 表示打出来的JAR包-->
+                            <include>${project.build.finalName}.jar</include>
+                        </resource>
+                    </resources>
                 </configuration>
             </plugin>
         </plugins>

@@ -34,7 +34,7 @@ public class UserController {
 
     @ApiOperation("获取用户个人信息")
     @GetMapping("/info")
-    public Result getInfo(@RequestAttribute("userId") Long id) {
+        public Result getInfo(@RequestAttribute("userId") Long id) {
         log.info("id:{}", id);
         if (id == null)
             throw new ServiceException(ResultCode.PARAM_IS_BLANK);
@@ -42,7 +42,6 @@ public class UserController {
         User user = userService.getById(id);
         if (user == null)
             throw new ServiceException(ResultCode.DATA_NONE);
-
         return Result.success(user);
     }
 

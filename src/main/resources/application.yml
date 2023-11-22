@@ -10,7 +10,7 @@ spring:
       max-request-size: 100MB
   redis:
     database: 0
-    host: 127.0.0.1
+    host: 47.115.215.176
     port: 6379
     password:
     jedis:
@@ -27,7 +27,7 @@ spring:
     timeout: 10000
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/cms
+    url: jdbc:mysql://47.115.215.176:3306/cms
     username: dgvt
     password: dgvt
     type: com.alibaba.druid.pool.DruidDataSource

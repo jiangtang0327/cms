@@ -47,12 +47,14 @@ public class Category implements Serializable {
      * 栏目删除状态
      */
     @TableLogic
-    @ExcelProperty(value = "栏目删除状态", converter = DeletedConverter.class)
+//    @ExcelProperty(value = "栏目删除状态", converter = DeletedConverter.class)
+    @ExcelProperty(value = "栏目删除状态")
     private Integer deleted;
     /**
      * 父栏目id
      */
-    @ExcelProperty(value = "父栏目", converter = CategoryParentIdConverter.class)
+//    @ExcelProperty(value = "父栏目", converter = CategoryParentIdConverter.class)
+    @ExcelProperty(value = "父栏目")
     private Integer parentId;
 
     public Category(String name) {

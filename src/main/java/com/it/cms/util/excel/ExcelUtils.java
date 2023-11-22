@@ -189,7 +189,6 @@ public class ExcelUtils {
 		//设置内容类型
 		response.setHeader("content-type", "application/octet-stream");
 		//设置响应的编码格式
-		response.setHeader("content-disposition",
-				"attachment;filename=" + fileName);
+		response.setHeader("content-disposition", "attachment;filename=" + fileName);
 	}
 }
