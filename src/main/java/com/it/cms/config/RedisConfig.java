@@ -1,4 +1,4 @@
-package com.it.cms.util.redis;
+package com.it.cms.config;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;

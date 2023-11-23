@@ -1,13 +1,15 @@
 package com.it.cms.service.impl;
 
+import com.alibaba.excel.EasyExcel;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.it.cms.bean.extend.CategoryExtend;
 import com.it.cms.bean.Article;
 import com.it.cms.bean.Category;
 import com.it.cms.bean.User;
+import com.it.cms.bean.extend.CategoryExtend;
+import com.it.cms.bean.vo.CategoryExport;
 import com.it.cms.exception.ServiceException;
 import com.it.cms.mapper.ArticleMapper;
 import com.it.cms.mapper.CategoryMapper;
@@ -15,10 +17,18 @@ import com.it.cms.mapper.UserMapper;
 import com.it.cms.service.CategoryService;
 import com.it.cms.util.ResultCode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author dgvt
@@ -179,7 +189,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         for (int i = 0; i < ids.size(); i++) {
             try {
                 boolean b = this.removeById(ids.get(i));
-                if (b){
+                if (b) {
                     j++;
                 }
             } catch (ServiceException e) {
@@ -211,6 +221,91 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         List<CategoryExtend> categoryExtends = categoryMapper.queryAllWithCates();
         return categoryExtends;
     }
+
+    @Override
+    public void exportExcel(HttpServletResponse response) throws IOException {
+        List<Category> categories = categoryMapper.selectList(null);
+        List<CategoryExport> categoryExports = new ArrayList<>();
+        categories.forEach(category -> {
+            CategoryExport categoryExport = new CategoryExport();
+            categoryExport.setDescription(category.getDescription());
+            categoryExport.setName(category.getName());
+            categoryExport.setOrderNum(category.getOrderNum());
+            if (category.getParentId() != null)
+                categoryExport.setParent(categoryMapper.selectById(category.getParentId()).getName());
+            categoryExport.setDeleted(category.getDeleted() == 0 ? "未被删除" : "已被删除");
+            categoryExports.add(categoryExport);
+        });
+        //设置编码格式
+        response.setCharacterEncoding("utf-8");
+        //设置导出文件名称（避免乱码）
+        String fileName = URLEncoder.encode("栏目信息".concat(".xlsx"), "UTF-8");
+        //设置内容类型
+        response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+        response.setHeader("content-type", "application/octet-stream");
+        //设置响应的编码格式
+        response.setHeader("content-disposition", "attachment;filename=" + fileName);
+        ServletOutputStream outputStream = response.getOutputStream();
+        EasyExcel.write(outputStream, CategoryExport.class)
+                .sheet("Sheet1") // 设置Excel的sheet名称
+                .doWrite(categoryExports); // 写入数据源
+    }
+
+    @Override
+    public void importExcel(InputStream inputStream) {
+        // 读取Excel文件
+        List<CategoryExport> categoryExports = EasyExcel.read(inputStream)
+                .head(CategoryExport.class)
+                .doReadAllSync();
+        // 转换成父实体类
+        List<Category> categories1 = new ArrayList<>();
+        categoryExports.forEach(categoryExport -> {
+            Category category = new Category();
+            category.setName(categoryExport.getName());
+            category.setDescription(categoryExport.getDescription());
+            category.setOrderNum(categoryExport.getOrderNum());
+            category.setDeleted("已被删除".equals(categoryExport.getDeleted()) ? 1 : 0);
+            if (categoryExport.getParent() == null) {
+                category.setParentId(null);
+                categories1.add(category);
+            }
+        });
+
+        //检查名字是否重复
+        List<Category> categories11 = checkRepetition(categories1);
+        saveBatch(categories11);
+
+        // 转换成子实体类
+        List<Category> categories2 = new ArrayList<>();
+        categoryExports.forEach(categoryExport -> {
+            Category category = new Category();
+            category.setName(categoryExport.getName());
+            category.setDescription(categoryExport.getDescription());
+            category.setOrderNum(categoryExport.getOrderNum());
+            category.setDeleted("已被删除".equals(categoryExport.getDeleted()) ? 1 : 0);
+            if (categoryExport.getParent() != null) {
+                //查询父栏目id
+                category.setParentId(lambdaQuery().eq(Category::getName, categoryExport.getParent()).one().getId());
+                categories2.add(category);
+            }
+        });
+        //检查名字是否重复
+        List<Category> categories22 = checkRepetition(categories2);
+        saveBatch(categories22);
+    }
+
+    private List<Category> checkRepetition(List<Category> list) {
+        List<Category> categoryList = new ArrayList<>();
+        List<Category> categories = categoryMapper.selectList(null);
+        List<String> names = categories.stream().map(Category::getName).collect(Collectors.toList());
+        list.forEach(t -> {
+            if (!names.contains(t.getName())) {
+                categoryList.add(t);
+            }
+        });
+        return categoryList;
+    }
+
 }
 
 

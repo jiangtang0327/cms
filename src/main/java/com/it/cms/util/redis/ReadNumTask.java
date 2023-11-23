@@ -28,7 +28,9 @@ public class ReadNumTask {
         try{
             //遍历redis当中拿到的map集合
             Map<Object, Object> article_read_num = redisUtil.getHash(READ_NUM);
+            //获取key和value集合
             Set<Map.Entry<Object, Object>> entries = article_read_num.entrySet();
+            //遍历
             for (Map.Entry<Object, Object> entry : entries) {
                 //获取key（文章id）
                 Long articleId = Long.valueOf(entry.getKey().toString());

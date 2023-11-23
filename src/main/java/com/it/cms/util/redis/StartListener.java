@@ -25,7 +25,9 @@ public class StartListener implements ApplicationListener<ApplicationReadyEvent>
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
         System.out.println("应用程序已启动！");
+        //查询所有文章
         List<Article> records = articleMapper.selectList(null);
+        //遍历文章
         for (Article art : records) {
             Long userId = art.getUserId();
             User user = userMapper.selectById(userId);

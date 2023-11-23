@@ -1,16 +1,12 @@
 package com.it.cms.web.controller;
 
-import com.alibaba.excel.EasyExcel;
-import com.alibaba.excel.support.ExcelTypeEnum;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.it.cms.aop.Logging;
-import com.it.cms.bean.extend.CategoryExtend;
 import com.it.cms.bean.Category;
+import com.it.cms.bean.extend.CategoryExtend;
 import com.it.cms.service.CategoryService;
 import com.it.cms.util.Result;
-import com.it.cms.util.excel.CategoryListener;
-import com.it.cms.util.excel.CategoryParentIdConverter;
 import com.it.cms.util.excel.ExcelUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -20,12 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.URLEncoder;
-import java.util.Collection;
 import java.util.List;
 
 @Api(tags = "栏目模块")
@@ -108,28 +100,30 @@ public class CategoryController {
     @ApiOperation("导入栏目数据")
     @Logging(value = "导入栏目数据")
     @PostMapping("/import")
-    public Result imports(@RequestPart MultipartFile file) {
-        LambdaQueryWrapper<Category> qw = new LambdaQueryWrapper<>();
-        qw.isNull(Category::getParentId);
+    public Result imports(@RequestPart MultipartFile file) throws IOException {
+//        LambdaQueryWrapper<Category> qw = new LambdaQueryWrapper<>();
+//        qw.isNull(Category::getParentId);
+//
+//        CategoryParentIdConverter.list = categoryService.list(qw);
+//
+//        List<Category> list = excelUtils.importData(file, Category.class, new CategoryListener());
+//
+//        categoryService.saveBatch(list);
 
-        CategoryParentIdConverter.list = categoryService.list(qw);
-
-        List<Category> list = excelUtils.importData(file, Category.class, new CategoryListener());
-
-        categoryService.saveBatch(list);
+        categoryService.importExcel(file.getInputStream());
 
         return Result.success("数据导入成功");
     }
 
     @ApiOperation("导出栏目数据")
     @GetMapping(value = "/export", produces = "application/octet-stream")
-    public void exports(HttpServletResponse response) {
-        LambdaQueryWrapper<Category> qw = new LambdaQueryWrapper<>();
-        qw.isNull(Category::getParentId);
-        CategoryParentIdConverter.list = categoryService.list(qw);
-        List<Category> list = categoryService.list();
-        excelUtils.exportExcel(response, list, Category.class, "栏目信息表");
+    public void exports(HttpServletResponse response) throws IOException {
+//        LambdaQueryWrapper<Category> qw = new LambdaQueryWrapper<>();
+//        qw.isNull(Category::getParentId);
+//        CategoryParentIdConverter.list = categoryService.list(qw);
+//        List<Category> list = categoryService.list();
+//        excelUtils.exportExcel(response, list, Category.class, "栏目信息表");
+        categoryService.exportExcel(response);
     }
-
 }
 

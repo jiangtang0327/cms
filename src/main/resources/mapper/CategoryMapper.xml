@@ -20,7 +20,7 @@
 
 
     <sql id="Base_Column_List">
-        id,name,description,
+        name,description,
         order_num,deleted,parent_id
     </sql>
 
@@ -31,7 +31,6 @@
           and parent_id = #{parentId}
         order by order_num
     </select>
-
 
     <select id="queryAllWithCates" resultMap="ExtendResultMap">
         select *
