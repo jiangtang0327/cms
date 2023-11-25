@@ -39,9 +39,9 @@ upload:
 # 七牛云OSS相关配置
   oss:
     # 配置AK
-    accessKey: "pVUsJaZnxy43WwmfyEbDHQFrpMlYq2yV0viHIgFb"
+    accessKey: ""
     # 配置SK
-    secretKey: "2fysqh6dW5QJDPD4JVHPxo9xEbgy78aIE4G-sWPZ"
+    secretKey: ""
     # 配置桶
     bucket: "jiangtang-love"
     # 配置基础域名
